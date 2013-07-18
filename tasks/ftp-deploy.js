@@ -24,7 +24,8 @@ module.exports = function(grunt) {
   var localRoot;
   var remoteRoot;
   var currPath;
-  var authVals;
+  var username;
+  var password;
   var exclusions;
 
   // A method for parsing the source location and storing the information into a suitably formated object
@@ -128,17 +129,6 @@ module.exports = function(grunt) {
     });
   }
 
-  function getAuthByKey (inKey) {
-    var tmpStr;
-    var retVal = null;
-
-    if (fs.existsSync('.ftppass')) {
-      tmpStr = grunt.file.read('.ftppass');
-      if (inKey != null && tmpStr.length) retVal = JSON.parse(tmpStr)[inKey];
-    }
-    return retVal;
-  }
-
   // The main grunt task
   grunt.registerMultiTask('ftp-deploy', 'Deploy code over FTP', function() {
     var done = this.async();
@@ -151,18 +141,19 @@ module.exports = function(grunt) {
 
     localRoot = Array.isArray(this.data.src) ? this.data.src[0] : this.data.src;
     remoteRoot = Array.isArray(this.data.dest) ? this.data.dest[0] : this.data.dest;
-    authVals = this.data.auth.authKey ? getAuthByKey(this.data.auth.authKey) : getAuthByKey(this.data.auth.host);
+    username = this.data.auth.username;
+    password = this.data.auth.password || '';
     exclusions = this.data.exclusions || [];
     ftp.useList = true;
     toTransfer = dirParseSync(localRoot);
 
     // Checking if we have all the necessary credentials before we proceed
-    if (authVals == null || authVals.username == null || authVals.password == null) {
+    if (!username || !password) {
       grunt.warn('Username or Password not found!');
     }
 
     // Authentication and main processing of files
-    ftp.auth(authVals.username, authVals.password, function(err) {
+    ftp.auth(username, password, function(err) {
       var locations = _.keys(toTransfer);
       if (err) {
         grunt.warn('Authentication ' + err);

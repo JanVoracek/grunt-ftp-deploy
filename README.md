@@ -21,7 +21,8 @@ To use this task you will need to include the following configuration in your _g
     auth: {
       host: 'server.com',
       port: 21,
-      authKey: 'key1'
+      username: 'username',
+      password: 'password'
     },
     src: 'path/to/source/folder',
     dest: '/path/to/destination/folder',
@@ -40,31 +41,11 @@ The parameters in our configuration are:
 
 - **host** - the name or the IP address of the server we are deploying to
 - **port** - the port that the _ftp_ service is running on
-- **authKey** - a key for looking up the saved credentials. If no value is defined, the `host` parameter will be used
+- **username** - the username used for authentication
+- **password** - the password used for authentication
 - **src** - the source location, the local folder that we are transferring to the server
 - **dest** - the destination location, the folder on the server we are deploying to
 - **exclusions** - an optional parameter allowing us to exclude files and folders by utilizing grunt's support for `minimatch`. Please note that the definitions should be relative to the project root.
-
-## Authentication parameters
-
-Usernames and passwords are stored as a JSON object in a file named `.ftppass`. This file should be located in the same folder as your `Gruntfile`. `.ftppass` should have the following format:
-
-```javascript
-{
-  "key1": {
-    "username": "username1",
-    "password": "password1"
-  },
-  "key2": {
-    "username": "username2",
-    "password": "password2"
-  }
-}
-```
-
-This way we can save as many username / password combinations as we want and look them up by the `authKey` value defined in the _grunt_ config file where the rest of the target parameters are defined.
-
-**IMPORTANT**: make sure that the `.ftppass` file uses double quotes (which is the proper _JSON_ syntax) instead of single quotes for the names of the keys and the string values.
 
 ## Dependencies
 
